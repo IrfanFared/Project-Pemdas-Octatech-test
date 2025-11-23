@@ -1,9 +1,30 @@
 import os
+
+# Nama file database, pastikan sesuai dengan file yang digunakan aplikasi Anda
+DB_NAME = "user_data.db"
+
+# Inisialisasi database: buat tabel jika belum ada
+def init_db():
+    import sqlite3
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nama TEXT,
+                username TEXT UNIQUE,
+                password TEXT
+            )
+        """)
+        conn.commit()
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.card import MDCard
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
+from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
+import sqlite3
+from kivy.metrics import dp 
 # Import Widget KivyMD 2.0.0
 from kivymd.uix.textfield import (
     MDTextField,
@@ -13,6 +34,8 @@ from kivymd.uix.textfield import (
 from kivymd.uix.button import MDButton, MDButtonText
 from kivymd.uix.fitimage import FitImage
 from kivy.uix.floatlayout import FloatLayout
+
+
 
 # --- CLASS HALAMAN (MDScreen) ---
 class SignupPage(MDScreen):
@@ -81,7 +104,7 @@ class SignupPage(MDScreen):
         )
 
         # Input Nama
-        input_nama = MDTextField(
+        self.input_nama = MDTextField(
             MDTextFieldHintText(text="Nama"),
             MDTextFieldTrailingIcon(icon="account"),
             mode="filled",
@@ -92,7 +115,7 @@ class SignupPage(MDScreen):
         )
 
         # Input Username
-        input_username = MDTextField(
+        self.input_username = MDTextField(
             MDTextFieldHintText(text="Username"),
             MDTextFieldTrailingIcon(icon="at"),
             mode="filled",
@@ -104,7 +127,7 @@ class SignupPage(MDScreen):
         )
 
         # Input Password
-        input_password = MDTextField(
+        self.input_password = MDTextField(
             MDTextFieldHintText(text="Password"),
             MDTextFieldTrailingIcon(icon="key"),
             mode="filled",
@@ -114,7 +137,7 @@ class SignupPage(MDScreen):
             radius=[10, 10, 10, 10],
             password=True
             
-        )
+        )    
 
         # Tombol Buat Akun
         btn_signup = MDButton(
@@ -135,12 +158,15 @@ class SignupPage(MDScreen):
         card_content.add_widget(label_subtitle)
         card_content.add_widget(MDLabel(text="", size_hint_y=None, height="10dp")) # Spacer
         
-        card_content.add_widget(input_nama)
-        card_content.add_widget(input_username)
-        card_content.add_widget(input_password)
+        card_content.add_widget(self.input_nama)
+        card_content.add_widget(self.input_username)
+        card_content.add_widget(self.input_password)
         
         card_content.add_widget(MDLabel(text="", size_hint_y=None, height="20dp")) # Spacer
         card_content.add_widget(btn_signup)
+        btn_signup.bind(on_release=self.do_signup)
+
+
 
         # Tombol Kembali
         btn_back = MDButton(style="text", pos_hint={"center_x": .5})
@@ -153,6 +179,37 @@ class SignupPage(MDScreen):
         
         # Masukkan layout utama ke dalam screen (self)
         self.add_widget(layout_utama)
+    
+
+    def do_signup(self, instance):
+        # LOGIKA DB ADA DI SINI SEKARANG
+        nama = self.input_nama.text
+        username = self.input_username.text
+        password = self.input_password.text
+
+        if not username or not password:
+            self.show_snackbar("Isi semua kolom!")
+            return
+
+        try:
+            # Buka koneksi lokal di fungsi ini
+            with sqlite3.connect(DB_NAME) as conn:
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO user_data (nama,username, password) VALUES (?,?,?)", (nama,username, password))
+                conn.commit()
+            
+            self.show_snackbar("Sukses! Silakan Login.")
+            # Reset field
+            self.input_username.text = ""
+            self.input_password.text = ""
+            # Pindah screen
+            self.manager.current = "login_screen"
+            
+        except sqlite3.IntegrityError:
+            self.show_snackbar("Username sudah ada!")
+
+    def go_back(self, instance):
+        self.manager.current = "login_screen"
 
     def back_to_login(self, instance):
         # Cek apakah ScreenManager ada sebelum mengaksesnya
@@ -161,4 +218,12 @@ class SignupPage(MDScreen):
             self.manager.transition.direction = "right"
         else:
             print("Screen Manager belum dipasang, tombol diklik.")
+    def show_snackbar(self, text):
+        snackbar = MDSnackbar(
+            MDSnackbarText(text=text),
+            y=dp(24),
+            pos_hint={"center_x": 0.5},
+            size_hint_x=0.8,
+        )
+        snackbar.open()
     

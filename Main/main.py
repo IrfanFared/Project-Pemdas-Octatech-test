@@ -10,6 +10,7 @@ if project_root not in sys.path:
 from Main.libs.screens.login import LoginScreen
 from Main.libs.screens.signup import SignupPage
 from Main.libs.screens.firstpage import GadgetHomeScreen
+from Main.libs.screens.dumyhome import DataApp
 
 
 from kivy.core.window import Window
@@ -24,7 +25,7 @@ from kivymd.uix.label import MDLabel
 
 #module code
 
-
+DB_NAME = "users.db"
 
 Window.size = (1000, 600)
 
@@ -42,10 +43,28 @@ class OctaTechApp(MDApp):
         sm.add_widget(LoginScreen(name="login_screen"))
 
         sm.add_widget(SignupPage(name="signup_screen"))
+
+        sm.add_widget(DataApp(name="data_app"))
         
         return sm
+    def create_table(self):
+        # Hanya membuat tabel, tidak mengurusi insert/select
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS user_data (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nama TEXT,
+                    username TEXT UNIQUE,
+                    password TEXT
+                )
+            """)
+            conn.commit()
 
 if __name__ == "__main__":
+    # Inisialisasi DB sebelum aplikasi jalan
+    from Main.libs.screens.signup import init_db
+    init_db()
     OctaTechApp().run()
 
 

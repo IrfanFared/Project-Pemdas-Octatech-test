@@ -10,7 +10,10 @@ from kivymd.uix.widget import Widget
 from kivymd.uix.button import MDButton, MDButtonText
 from kivymd.uix.textfield import MDTextField, MDTextFieldHintText
 from kivy.uix.image import Image
-
+from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
+# Nama file database, pastikan konsisten dengan signup.py
+DB_NAME = "user_data.db"
+import sqlite3
 # Mengatur ukuran window
 #Window.size = (1000, 600)
 
@@ -116,7 +119,7 @@ class LoginScreen(MDScreen):
         subtitle_label.height = subtitle_label.texture_size[1] # Trik agar tinggi label pas
 
         # Input Username
-        username_field = MDTextField(
+        self.username_field = MDTextField(
             mode="filled",
             theme_bg_color="Custom",
             fill_color_normal=(1, 1, 1, 1),
@@ -127,22 +130,24 @@ class LoginScreen(MDScreen):
             text="Username",
             text_color_normal=(0.5, 0.5, 0.5, 1)
         )
-        username_field.add_widget(username_hint)
+        self.username_field.add_widget(username_hint)
 
         # Input Password
-        password_field = MDTextField(
+        self.password_field = MDTextField(
             mode="filled",
             theme_bg_color="Custom",
             fill_color_normal=(1, 1, 1, 1),
             fill_color_focus=(1, 1, 1, 1),
-            radius=[10, 10, 10, 10]
-            # password=True # (Opsional: tambahkan ini jika ingin bintang-bintang)
+            radius=[10, 10, 10, 10],
+            password=True # (Opsional: tambahkan ini jika ingin bintang-bintang)
         )
         password_hint = MDTextFieldHintText(
             text="Password",
             text_color_normal=(0.5, 0.5, 0.5, 1)
         )
-        password_field.add_widget(password_hint)
+        self.password_field.add_widget(password_hint)
+
+
 
         # Tombol Sign In
         btn_signin = MDButton(
@@ -154,7 +159,7 @@ class LoginScreen(MDScreen):
             radius=[dp(10)],
             pos_hint={"center_x": .5}
         )
-        btn_signin.bind(on_release=self.login_action) # Hubungkan ke fungsi
+        btn_signin.bind(on_release=self.do_login) # Hubungkan ke fungsi
         
         btn_text = MDButtonText(
             text="Sign In",
@@ -165,6 +170,7 @@ class LoginScreen(MDScreen):
             role="medium"
         )
         btn_signin.add_widget(btn_text)
+        btn_signin
 
         # Footer (Link Sign Up)
         footer_box = MDBoxLayout(
@@ -200,8 +206,8 @@ class LoginScreen(MDScreen):
         # Menyusun Bagian Kanan
         form_box.add_widget(title_label)
         form_box.add_widget(subtitle_label)
-        form_box.add_widget(username_field)
-        form_box.add_widget(password_field)
+        form_box.add_widget(self.username_field)
+        form_box.add_widget(self.password_field)
         form_box.add_widget(Widget(size_hint_y=None, height=dp(10))) # Spacer
         form_box.add_widget(btn_signin)
         form_box.add_widget(footer_box)
@@ -215,13 +221,36 @@ class LoginScreen(MDScreen):
         # Masukkan Layout Utama ke Screen
         self.add_widget(main_layout)
 
+    def do_login(self, instance):
+        # LOGIKA DB ADA DI SINI
+        username = self.username_field.text
+        password = self.username_field.text
+
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM user_data WHERE username = ? AND password = ?", (username, password))
+            result = cursor.fetchone()
+
+        if result:
+            # Jika sukses, pindah ke screen data_app
+            self.manager.current = "data_app"
+            self.password_field.text = ""
+        else:
+            self.show_snackbar("Gagal Login!")
+
     def go_to_signup(self, instance):
         # Fungsi untuk pindah layar
         self.manager.current = "signup_screen"
         self.manager.transition.direction = "left"    
         
-        
+    def show_snackbar(self, text):
+        snackbar = MDSnackbar(
+            MDSnackbarText(text=text),
+            y=dp(24),
+            pos_hint={"center_x": 0.5},
+            size_hint_x=0.8,
+        )
+        snackbar.open()    
 
-    def login_action(self, instance):
-        print("Login button pressed!")
+ 
 
