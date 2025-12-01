@@ -229,7 +229,7 @@ class HomeScreen(MDScreen):
         # ISI CARD (Harusnya sekarang Biru Tua)
         menu_grid.add_widget(MenuCard("checkbox-marked-circle-outline", "Rekomendasi"))
         menu_grid.add_widget(MenuCard("piggy-bank-outline", "Tabungan", on_tap=self.to_savings))
-        menu_grid.add_widget(MenuCard("star-outline", "Review"))
+        menu_grid.add_widget(MenuCard("star-outline", "Review", on_tap=self.to_review))
         menu_grid.add_widget(MenuCard("heart-outline", "Wishlist"))
         
         body_content.add_widget(self.lbl_hello)
@@ -252,6 +252,12 @@ class HomeScreen(MDScreen):
         else:
             print("DEBUG: ERROR - manager None!")
     
+    def to_review(self, instance):
+        """Navigate to the review screen."""
+        if self.manager:
+            self.manager.current = "review_screen"
+            self.manager.transition.direction = "left"
+
     def to_savings(self, instance):
         """Navigate to the savings screen."""
         if self.manager:
