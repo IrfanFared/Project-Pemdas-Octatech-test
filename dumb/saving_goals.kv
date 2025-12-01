@@ -1,0 +1,236 @@
+# Definisi Custom Widget untuk Item Riwayat
+<HistoryItem>:
+    theme_bg_color: "Custom"
+    md_bg_color: self.theme_cls.surfaceContainerLowColor
+    
+    MDListItemHeadlineText:
+        text: root.amount_text
+        theme_text_color: "Custom"
+        text_color: "green" if root.is_positive else "red"
+        
+    MDListItemTrailingSupportingText:
+        text: root.date_text
+
+# --- PERUBAHAN DI SINI: Definisi Konten Dialog Edit ---
+<EditGoalContent>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: 0.5
+    size_hint_x: 1.0
+    pos_hint: {"center_x": 0.1, "center_y": 0.5}
+    # Tinggi diperbesar agar muat 3 input field
+    height: "200dp"
+    weight: "300dp" 
+
+    MDTextField:
+        id: edit_name
+        mode: "outlined"
+        pos_hint: {"center_x": 0.5}
+        MDTextFieldHintText:
+            text: "Nama Barang"
+
+    MDTextField:
+        id: edit_target
+        mode: "outlined"
+        pos_hint: {"center_x": 0.5}
+        MDTextFieldHintText:
+            text: "Target Jumlah"
+            
+    # Input tambahan untuk Tanggal
+    
+
+# Layar Utama
+MDScreen:
+    md_bg_color: [0.98, 0.96, 1, 1]
+
+    MDScrollView:
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "16dp"
+            spacing: "20dp"
+            adaptive_height: True
+
+            # --- HEADER CARD ---
+            MDCard:
+                style: "elevated"
+                padding: "16dp"
+                orientation: "vertical"
+                spacing: "10dp"
+                adaptive_height: True
+                radius: [24, 24, 24, 24]
+                
+                MDBoxLayout:
+                    adaptive_height: True
+                    spacing: "10dp"
+                    
+                    MDIcon:
+                        icon: "piggy-bank"
+                        theme_text_color: "Custom"
+                        text_color: "purple"
+                        pos_hint: {"center_y": .5}
+                        
+                    MDLabel:
+                        text: app.goal_name
+                        font_style: "Headline"
+                        role: "small"
+                        bold: True
+                        adaptive_height: True
+                        pos_hint: {"center_y": .5}
+                    
+                    MDButton:
+                        style: "text"
+                        pos_hint: {"center_y": .5}
+                        on_release: app.open_edit_dialog()
+                        MDButtonIcon:
+                            icon: "pencil"
+
+                MDLabel:
+                    text: f"Target: {app.format_rupiah(app.target_amount)}"
+                    theme_text_color: "Secondary"
+                    adaptive_height: True
+
+                # --- BAGIAN PERSENTASE ---
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_height: True
+                    padding: [0, "20dp", 0, "20dp"]
+                    spacing: "5dp"
+                    
+                    MDLabel:
+                        text: f"{int(app.progress_percent)}%"
+                        halign: "center"
+                        font_style: "Display"
+                        role: "large"
+                        theme_text_color: "Custom"
+                        text_color: "purple"
+                        bold: True
+                        adaptive_height: True
+                        
+                    MDLabel:
+                        text: "Tercapai"
+                        halign: "center"
+                        theme_text_color: "Secondary"
+                        font_style: "Label"
+                        role: "large"
+                        adaptive_height: True
+
+                # Info Saldo dan Sisa
+                MDBoxLayout:
+                    spacing: "10dp"
+                    adaptive_height: True
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_height: True
+                        MDLabel:
+                            text: "Sudah Ditabung"
+                            halign: "center"
+                            font_style: "Label"
+                            role: "medium"
+                        MDLabel:
+                            text: app.format_rupiah(app.current_amount)
+                            halign: "center"
+                            bold: True
+                            theme_text_color: "Custom"
+                            text_color: "green"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_height: True
+                        MDLabel:
+                            text: "Sisa Target"
+                            halign: "center"
+                            font_style: "Label"
+                            role: "medium"
+                        MDLabel:
+                            text: app.format_rupiah(app.target_amount - app.current_amount)
+                            halign: "center"
+                            bold: True
+                            theme_text_color: "Custom"
+                            text_color: "orange"
+            
+            # --- INPUT SECTION ---
+            MDCard:
+                style: "filled"
+                md_bg_color: [0.95, 0.9, 0.98, 1]
+                padding: "16dp"
+                orientation: "vertical"
+                spacing: "16dp"
+                adaptive_height: True
+                radius: [20, 20, 20, 20]
+
+                MDLabel:
+                    text: "Tambah Tabungan"
+                    bold: True
+                    adaptive_height: True
+
+                MDBoxLayout:
+                    spacing: "10dp"
+                    adaptive_height: True
+                    
+                    MDTextField:
+                        id: input_amount
+                        mode: "outlined"
+                        MDTextFieldHintText:
+                            text: "Nominal (Rp)"
+
+                    MDButton:
+                        style: "filled"
+                        on_release: app.add_manual_deposit()
+                        MDButtonText:
+                            text: "Tambah"
+
+                MDGridLayout:
+                    cols: 3
+                    adaptive_height: True
+                    spacing: "8dp"
+                    id: quick_grid
+
+            # --- ACTION BUTTONS ---
+            MDBoxLayout:
+                spacing: "10dp"
+                adaptive_height: True
+                
+                MDButton:
+                    style: "tonal"
+                    theme_bg_color: "Custom"
+                    md_bg_color: [1, 0.9, 0.7, 1]
+                    size_hint_x: 0.5
+                    on_release: app.withdraw_money()
+                    MDButtonText:
+                        text: "Withdraw"
+                        theme_text_color: "Custom"
+                        text_color: [0.6, 0.4, 0, 1]
+                
+                MDButton:
+                    style: "tonal"
+                    theme_bg_color: "Custom"
+                    md_bg_color: [1, 0.8, 0.8, 1]
+                    size_hint_x: 0.5
+                    on_release: app.reset_data()
+                    MDButtonText:
+                        text: "Reset"
+                        theme_text_color: "Custom"
+                        text_color: [0.7, 0, 0, 1]
+
+            # --- HISTORY SECTION ---
+            MDCard:
+                style: "elevated"
+                padding: "16dp"
+                orientation: "vertical"
+                adaptive_height: True
+                radius: [24, 24, 24, 24]
+                
+                MDLabel:
+                    text: "Riwayat Tabungan"
+                    font_style: "Title"
+                    role: "medium"
+                    bold: True
+                    adaptive_height: True
+                    padding_y: "10dp"
+                
+                MDBoxLayout:
+                    id: history_list
+                    orientation: "vertical"
+                    adaptive_height: True
+                    spacing: "5dp"

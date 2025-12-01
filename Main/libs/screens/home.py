@@ -40,7 +40,7 @@ class HeaderButton(ButtonBehavior, MDBoxLayout):
         self.adaptive_width = True
         self.spacing = dp(4)
         self.padding = dp(4)
-        self.on_release = callback_func
+        self.callback = callback_func
         
         btn_icon = MDIconButton(
             icon=icon_name,
@@ -61,6 +61,11 @@ class HeaderButton(ButtonBehavior, MDBoxLayout):
         )
         self.add_widget(btn_icon)
         self.add_widget(lbl_text)
+    
+    def on_release(self):
+        """Override on_release untuk panggil callback dengan self"""
+        if self.callback:
+            self.callback(self)
 
 # --- 2. MENU CARD (FIX WARNA) ---
 class MenuCard(MDCard):
@@ -174,6 +179,7 @@ class HomeScreen(MDScreen):
         btn_profile = HeaderButton("account-circle", "Nama", self.to_profile)
         btn_logout = HeaderButton("logout", "Log out", self.do_logout)
         
+        
         right_menu = MDBoxLayout(orientation='horizontal', spacing=dp(10), adaptive_width=True)
         right_menu.add_widget(btn_profile)
         right_menu.add_widget(btn_logout)
@@ -234,7 +240,13 @@ class HomeScreen(MDScreen):
         self.add_widget(root_layout)
 
     def to_profile(self, instance):
-        print("Pindah ke Profil")
+        print(f"DEBUG: to_profile dipanggil, manager = {self.manager}")
+        if self.manager:
+            self.manager.current = "profile_screen"
+            self.manager.transition.direction = "left"
+            print("DEBUG: Navigasi ke profile_screen berhasil")
+        else:
+            print("DEBUG: ERROR - manager None!")
         
     def do_logout(self, instance):
         print("Logout...")

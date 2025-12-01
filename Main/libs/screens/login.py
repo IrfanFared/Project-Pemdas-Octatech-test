@@ -227,6 +227,29 @@ class LoginScreen(MDScreen):
         footer_box.add_widget(footer_label)
         footer_box.add_widget(btn_signup)
 
+        btn_back = MDButton(
+            style="filled",
+            theme_bg_color="Custom",
+            md_bg_color=(0, 0.47, 0.8, 1),
+            theme_width="Custom",
+            size_hint_x=1,
+            radius=[dp(10)],
+            pos_hint={"center_x": .5}
+        )
+         # Hubungkan ke fungsi
+        
+        btn_text_back = MDButtonText(
+            text="Kembali",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            pos_hint={"center_x": .5, "center_y": .5},
+            font_style="Title",
+            role="medium",
+            font_name="monserrat-arabic-semisbold.otf"
+        )
+        btn_back.add_widget(btn_text_back)
+        btn_back.bind(on_release=self.bat_to_firstpage)
+
         # Menyusun Bagian Kanan
         form_box.add_widget(title_label)
         form_box.add_widget(subtitle_label)
@@ -234,6 +257,7 @@ class LoginScreen(MDScreen):
         form_box.add_widget(self.password_field)
         form_box.add_widget(Widget(size_hint_y=None, height=dp(10))) # Spacer
         form_box.add_widget(btn_signin)
+        form_box.add_widget(btn_back)
         form_box.add_widget(footer_box)
         
         right_layout.add_widget(form_box)
@@ -281,6 +305,11 @@ class LoginScreen(MDScreen):
             size_hint_x=0.8,
         )
         snackbar.open()    
+
+    def bat_to_firstpage(self, instance):
+        # Navigate back to the first page
+        self.manager.current = "first_page"
+        self.manager.transition.direction = "right"
 
  
 

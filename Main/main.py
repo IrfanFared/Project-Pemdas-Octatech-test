@@ -12,6 +12,8 @@ from Main.libs.screens.signup import SignupPage
 from Main.libs.screens.firstpage import GadgetHomeScreen
 from Main.libs.screens.dumyhome import DataApp
 from Main.libs.screens.home import HomeScreen
+#from Main.libs.screens.profil import ProfileScreen
+
 
 
 from kivy.core.window import Window
@@ -23,6 +25,7 @@ from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.label import MDLabel
+from kivy.lang import Builder
 
 #module code
 
@@ -47,6 +50,13 @@ class OctaTechApp(MDApp):
         sm.add_widget(SignupPage(name="signup_screen"))
 
         sm.add_widget(HomeScreen(name="home_screen"))
+        
+        
+
+        Builder.load_file("Main/libs/screens/profile.kv")
+        from Main.libs.screens.profilescreen import ProfileScreen
+        sm.add_widget(ProfileScreen(name="profile_screen"))
+
         
         return sm
     def create_table(self):
