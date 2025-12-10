@@ -49,19 +49,12 @@ class LoginScreen(MDScreen):
         )
         
         # Background Image with Overlay
-        bg_path = os.path.join(IMG_DIR, "login page.jpg")
+        bg_path = os.path.join(IMG_DIR, "hero3.png")
         if os.path.exists(bg_path):
             bg_image = FitImage(source=bg_path)
             left_layout.add_widget(bg_image)
             
-            # Dark Blue Overlay
-            overlay = MDCard(
-                size_hint=(1, 1),
-                md_bg_color=(0.1, 0.1, 0.35, 0.85),
-                radius=[0],
-                elevation=0
-            )
-            left_layout.add_widget(overlay)
+
 
         # Branding Content
         branding_box = MDBoxLayout(

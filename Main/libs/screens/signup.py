@@ -39,7 +39,7 @@ from kivymd.uix.textfield import (
 )
 from kivymd.uix.button import MDButton, MDButtonText
 from kivymd.uix.fitimage import FitImage
-from kivy.uix.floatlayout import FloatLayout
+from kivymd.uix.floatlayout import MDFloatLayout
 from kivy.core.text import LabelBase
 # Bangun path secara portable untuk menghindari escape sequence issues pada Windows
 MAIN_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -72,23 +72,17 @@ class SignupPage(MDScreen):
         MAIN_DIR = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
         IMG_DIR = os.path.join(MAIN_DIR, "assets", "Images")
 
-        left_layout = FloatLayout(
+        left_layout = MDFloatLayout(
             size_hint_x=0.45
         )
         
-        # Reuse login BG for consistency
-        bg_path = os.path.join(IMG_DIR, "login page.jpg") 
+        # Use specific signup BG
+        bg_path = os.path.join(IMG_DIR, "hero3.png") 
         if os.path.exists(bg_path):
             bg_image = FitImage(source=bg_path)
             left_layout.add_widget(bg_image)
             
-            overlay = MDCard(
-                size_hint=(1, 1),
-                md_bg_color=(0.1, 0.1, 0.35, 0.85),
-                radius=[0],
-                elevation=0
-            )
-            left_layout.add_widget(overlay)
+
 
         branding_box = MDBoxLayout(
             orientation='vertical',
@@ -124,17 +118,10 @@ class SignupPage(MDScreen):
 
 
         # --- RIGHT SIDE (FORM) ---
-        right_layout = FloatLayout(
+        right_layout = MDFloatLayout(
             size_hint_x=0.55,
+            md_bg_color=(1, 1, 1, 1) # White clean background
         )
-        # White BG
-        right_layout.canvas.before.clear()
-        with right_layout.canvas.before:
-            from kivy.graphics import Color, Rectangle
-            Color(1, 1, 1, 1)
-            Rectangle(pos=right_layout.pos, size=right_layout.size)
-            # Bind size/pos update if needed, but simple add_widget bg_color works better usually.
-        # Alternative: just use MDFloatLayout with md_bg_color if imported
         
         form_container = MDBoxLayout(
             orientation='vertical',
@@ -235,7 +222,7 @@ class SignupPage(MDScreen):
         btn_login = MDButton(style="text")
         btn_login.bind(on_release=self.back_to_login)
         btn_login.add_widget(MDButtonText(
-            text="Login di sini",
+            text="Login Sekarang",
             theme_text_color="Custom",
             text_color=(0.31, 0.27, 0.9, 1),
             bold=True
