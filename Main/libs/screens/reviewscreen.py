@@ -25,6 +25,8 @@ from kivymd.uix.dialog import (
 import csv
 import os
 
+import random
+
 def load_products():
     products = []
     # Determine the directory of the current script
@@ -36,6 +38,36 @@ def load_products():
     if not os.path.exists(csv_path):
         print(f"CRITICAL ERROR: CSV file not found at {csv_path}")
         return []
+
+    # --- DUMMY DATA POOL ---
+    dummy_users = [
+        "Budi Santoso", "Siti Aminah", "Rizky Pratama", "Dewi Lestari", 
+        "Andi Susanto", "Rina Wijaya", "Eko Saputra", "Nurul Hidayah",
+        "Bayu Nugroho", "Sari Indah", "Adi Kurniawan", "Mega Putri",
+        "Fajar Ramadhan", "Lina Marlina", "Dimas Anggara"
+    ]
+
+    positive_templates = [
+        "Laptop ini sangat bagus! Performa cepat dan layarnya jernih.",
+        "Worth it banget dengan harga segini. Baterai awet seharian.",
+        "Desainnya elegan dan ringan, enak dibawa kemana-mana.",
+        "Buat multitasking lancar jaya, ga ada kendala.",
+        "Suka banget sama keyboardnya, empuk buat ngetik lama.",
+        "Pengiriman cepat, barang aman sampai tujuan. Mantap!",
+        "Gaming tipis-tipis masih oke banget pake laptop ini.",
+        "Speaker kenceng, bass-nya lumayan berasa.",
+        "Chargernya cepet penuh, sangat membantu mobilitas.",
+        "Rekomended banget buat mahasiswa atau pekerja kantoran."
+    ]
+
+    neutral_templates = [
+        "Lumayan lah buat harga segini, sesuai ekspektasi.",
+        "Bagus sih, tapi sayang port USB-nya dikit.",
+        "Body agak licin, tapi overall oke.",
+        "Webcam standar aja, butuh pencahayaan bagus.",
+        "Kadang agak anget kalau dipake berat, tapi wajar sih.",
+        "Cukup baik untuk penggunaan sehari-hari."
+    ]
 
     try:
         # Use utf-8-sig to handle potential BOM from Excel
@@ -54,6 +86,27 @@ def load_products():
                     if not os.path.exists(image_path):
                          # print(f"DEBUG: Image not found: {image_path}") # Optional: reduce noise
                          pass
+                    
+                    # Generate Dummy Reviews
+                    product_reviews = []
+                    num_reviews = random.randint(1, 5) # Generate 1 to 5 reviews per product
+                    
+                    for _ in range(num_reviews):
+                        user = random.choice(dummy_users)
+                        # Biased towards positive ratings for realism/demo
+                        rating = random.choices([3, 4, 5], weights=[1, 4, 5], k=1)[0] 
+                        
+                        if rating >= 4:
+                            text = random.choice(positive_templates)
+                        else:
+                            text = random.choice(neutral_templates)
+                            
+                        product_reviews.append({
+                            'user': user,
+                            'rating': rating,
+                            'text': text
+                        })
+
 
                     product = {
                         'id': int(row['No']),
@@ -62,7 +115,7 @@ def load_products():
                         'category': 'Laptop',
                         'price': row.get('Harga', ''),
                         'description': f"CPU: {row.get('CPU','')}, RAM: {row.get('RAM','')}, Storage: {row.get('Storage','')}",
-                        'reviews': [] 
+                        'reviews': product_reviews 
                     }
                     products.append(product)
                 except (ValueError, KeyError) as e:
