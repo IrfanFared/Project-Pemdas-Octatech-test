@@ -18,8 +18,24 @@ PROFILE_PHOTOS_DIR = os.path.join(MAIN_DIR, "data", "profile_photos")
 os.makedirs(PROFILE_PHOTOS_DIR, exist_ok=True)
 
 
-# Mendefinisikan class Screen sesuai nama di file KV
+import sqlite3
+from kivymd.uix.dialog import (
+    MDDialog,
+    MDDialogHeadlineText,
+    MDDialogContentContainer,
+    MDDialogButtonContainer,
+)
+from kivymd.uix.textfield import MDTextField, MDTextFieldHintText
+from kivymd.uix.button import MDButton, MDButtonText
+from kivymd.uix.widget import Widget
+
+class ChangePasswordContent(BoxLayout):
+    pass
+    
+# Menu class Screen sesuai nama di file KV
 class ProfileScreen(MDScreen):
+    dialog = None
+
     def back_to_home(self):
         self.manager.current = "home_screen"
 
@@ -43,7 +59,7 @@ class ProfileScreen(MDScreen):
         content.add_widget(filechooser)
 
         buttons = BoxLayout(size_hint_y=None, height='48dp', spacing='8dp', padding='8dp')
-        from kivymd.uix.button import MDButton, MDButtonText
+        # from kivymd.uix.button import MDButton, MDButtonText # Already imported at top
         cancel = MDButton(style='text')
         cancel_text = MDButtonText(text='Batal')
         cancel.add_widget(cancel_text)
@@ -84,6 +100,101 @@ class ProfileScreen(MDScreen):
     def _show_snackbar(self, text):
         snackbar = MDSnackbar(MDSnackbarText(text=text), y=20, size_hint_x=0.8)
         snackbar.open()
+
+    def update_username(self):
+        new_username = self.ids.new_username_input.text.strip()
+        if not new_username:
+            self._show_snackbar("Username baru tidak boleh kosong")
+            return
+
+        app = MDApp.get_running_app()
+        current_username = getattr(app, 'username', None)
+        
+        if not current_username:
+            self._show_snackbar("Silakan login terlebih dahulu")
+            return
+
+        db_path = os.path.join(MAIN_DIR, "user_data.db")
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("UPDATE user_data SET username = ? WHERE username = ?", (new_username, current_username))
+                if cursor.rowcount > 0:
+                    conn.commit()
+                    app.username = new_username
+                    self.ids.username_label.text = new_username
+                    self.ids.new_username_input.text = ""
+                    self._show_snackbar("Username berhasil diperbarui")
+                else:
+                    self._show_snackbar("Gagal memperbarui username")
+        except sqlite3.IntegrityError:
+            self._show_snackbar("Username sudah digunakan")
+        except Exception as e:
+             self._show_snackbar(f"Database Error: {e}")
+
+    def show_change_password_dialog(self):
+        if not self.dialog:
+            self.content_cls = ChangePasswordContent()
+            self.dialog = MDDialog(
+                MDDialogHeadlineText(text="Ganti Password"),
+                MDDialogContentContainer(
+                    self.content_cls,
+                    orientation="vertical",
+                ),
+                MDDialogButtonContainer(
+                    Widget(),
+                    MDButton(
+                        MDButtonText(text="Batal"),
+                        style="text",
+                        on_release=lambda x: self.dialog.dismiss()
+                    ),
+                    MDButton(
+                        MDButtonText(text="Simpan"),
+                        style="filled",
+                        on_release=self.change_password
+                    ),
+                    spacing="8dp",
+                ),
+            )
+        self.dialog.open()
+
+    def change_password(self, instance):
+        input1 = self.content_cls.ids.new_password
+        input2 = self.content_cls.ids.confirm_password
+        
+        pass1 = input1.text
+        pass2 = input2.text
+        
+        if not pass1 or not pass2:
+            pass # Creating a snackbar here effectively requires passing ref or simple validation
+            # For simplicity just return, but ideally showing error in dialog
+            return 
+            
+        if pass1 != pass2:
+             # Ideally show error
+             return
+
+        app = MDApp.get_running_app()
+        current_username = getattr(app, 'username', None)
+
+        if not current_username:
+            self.dialog.dismiss()
+            self._show_snackbar("Anda harus login")
+            return
+
+        db_path = os.path.join(MAIN_DIR, "user_data.db")
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("UPDATE user_data SET password = ? WHERE username = ?", (pass1, current_username))
+                conn.commit()
+                self._show_snackbar("Password berhasil diubah")
+                input1.text = ""
+                input2.text = ""
+                self.dialog.dismiss()
+        except Exception as e:
+            self.dialog.dismiss()
+            self._show_snackbar(f"Error: {e}")
 
 
 

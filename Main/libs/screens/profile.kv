@@ -1,3 +1,23 @@
+<ChangePasswordContent>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "140dp"
+
+    MDTextField:
+        id: new_password
+        mode: "outlined"
+        password: True
+        MDTextFieldHintText:
+            text: "Password Baru"
+
+    MDTextField:
+        id: confirm_password
+        mode: "outlined"
+        password: True
+        MDTextFieldHintText:
+            text: "Konfirmasi Password"
+
 <ProfileScreen>:
     # --- Pengaturan Dasar Layar ---
     md_bg_color: [0.92, 0.94, 0.98, 1]  # Warna background biru muda
@@ -173,6 +193,7 @@
                     spacing: "10dp"
 
                     MDTextField:
+                        id: new_username_input
                         mode: "outlined"
                         size_hint_x: 0.7
                         
@@ -184,6 +205,7 @@
                         size_hint_x: 0.3
                         pos_hint: {"center_y": .5}
                         md_bg_color: [0.3, 0.2, 0.9, 1]
+                        on_release: root.update_username()
                         
                         MDButtonText:
                             text: "Update"
@@ -199,6 +221,7 @@
                 md_bg_color: [0.1, 0.15, 0.2, 1]
                 radius: [8, ]
                 pos_hint: {"center_x": .5}
+                on_release: root.show_change_password_dialog()
                 
                 MDButtonIcon:
                     icon: "lock-outline"
