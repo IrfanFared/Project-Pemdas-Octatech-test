@@ -77,7 +77,7 @@ class SignupPage(MDScreen):
         )
         
         # Use specific signup BG
-        bg_path = os.path.join(IMG_DIR, "hero3.png") 
+        bg_path = os.path.join(IMG_DIR, "bg2.jpg") 
         if os.path.exists(bg_path):
             bg_image = FitImage(source=bg_path)
             left_layout.add_widget(bg_image)
@@ -99,7 +99,7 @@ class SignupPage(MDScreen):
             role="medium",
             bold=True,
             theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
+            text_color=(0.1, 0.17, 0.35, 1),
             adaptive_height=True
         )
         branding_box.add_widget(tagline)
@@ -108,9 +108,10 @@ class SignupPage(MDScreen):
             text="Dapatkan rekomendasi gadget terbaik dan diskusikan dengan pengguna lain.",
             halign="center",
             font_style="Body",
+            font_name="Popins-Bold",
             role="medium",
             theme_text_color="Custom",
-            text_color=(0.9, 0.9, 0.9, 1),
+            text_color=(0.1, 0.17, 0.35, 1),
             adaptive_height=True
         )
         branding_box.add_widget(sub_tagline)
@@ -135,7 +136,8 @@ class SignupPage(MDScreen):
         # Header
         header_box = MDBoxLayout(orientation='vertical', adaptive_height=True, spacing="8dp")
         title_label = MDLabel(
-            text="Create Account",
+            text="Buat akun",
+            font_name="Popins-Bold",
             font_style="Display",
             role="small",
             bold=True,
@@ -146,6 +148,7 @@ class SignupPage(MDScreen):
         subtitle_label = MDLabel(
             text="Lengkapi data diri untuk mendaftar.",
             font_style="Body",
+            font_name="Popins-Bold",
             role="large",
             theme_text_color="Secondary",
             adaptive_height=True
@@ -156,7 +159,7 @@ class SignupPage(MDScreen):
 
         # Inputs
         self.input_nama = MDTextField(
-            MDTextFieldHintText(text="Nama Lengkap"),
+            MDTextFieldHintText(text="Nama Lengkap",font_name="Popins-Bold"),
             mode="outlined",
             size_hint_x=1,
             theme_text_color="Custom",
@@ -165,7 +168,7 @@ class SignupPage(MDScreen):
         form_container.add_widget(self.input_nama)
 
         self.input_username = MDTextField(
-            MDTextFieldHintText(text="Username"),
+            MDTextFieldHintText(text="Username",font_name="Popins-Bold"),
             mode="outlined",
             size_hint_x=1,
             theme_text_color="Custom",
@@ -174,7 +177,7 @@ class SignupPage(MDScreen):
         form_container.add_widget(self.input_username)
 
         self.input_password = MDTextField(
-            MDTextFieldHintText(text="Password"),
+            MDTextFieldHintText(text="Password",font_name="Popins-Bold"),
             mode="outlined",
             size_hint_x=1,
             password=True,
@@ -197,6 +200,7 @@ class SignupPage(MDScreen):
         btn_signup.bind(on_release=self.do_signup)
         btn_signup.add_widget(MDButtonText(
             text="Sign Up",
+            font_name="Popins",
             pos_hint={"center_x": .5, "center_y": .5},
             bold=True,
             theme_text_color="Custom",

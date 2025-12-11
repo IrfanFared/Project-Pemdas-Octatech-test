@@ -64,26 +64,28 @@ KV = '''
     padding: dp(10)
     spacing: dp(5)
     theme_bg_color: "Custom"
-    md_bg_color: 1, 1, 1, 1
+    md_bg_color: root.icon_bg_color
 
     MDBoxLayout:
         size_hint: None, None
         size: dp(50), dp(50)
         radius: [dp(25),]
-        md_bg_color: root.icon_bg_color
+        # md_bg_color: [1, 1, 1, 0.2]  <-- Removed white background
         pos_hint: {"center_x": 0.5}
         
-        MDIconButton:
+        MDIcon:
             icon: root.icon_name
-            theme_icon_color: "Custom"
-            icon_color: 1, 1, 1, 1
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
-            font_size: "24sp"
+            font_size: "32sp"
+            halign: "center"
 
     MDLabel:
         text: root.text_label
         halign: "center"
-        theme_text_color: "Primary"
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 1
         bold: True
         font_style: "Label"
         role: "large"
@@ -183,9 +185,7 @@ KV = '''
                 icon: "account-circle-outline"
                 on_release: root.to_profile()
                 
-            MDIconButton:
-                icon: "logout"
-                on_release: root.do_logout()
+            
                 
         # --- CONTENT ---
         ScrollView:
@@ -260,6 +260,7 @@ KV = '''
                         
                     ModernMenuButton:
                         icon_name: "heart-outline"
+                        pos_hint: {"center_x": 0.5}
                         text_label: "Wishlist"
                         icon_bg_color: get_color_from_hex("#9C27B0")
                         on_release: root.to_wishlist()
@@ -322,8 +323,11 @@ class FeaturedProductCard(MDCard):
         if hasattr(app, 'show_product_detail') and self.product_id:
             app.show_product_detail(self.product_id)
 
+from kivy.clock import Clock
+
 class HomeScreen(MDScreen):
     built_once = False
+    _carousel_event = None
 
     def on_enter(self):
         # Update username
@@ -339,6 +343,26 @@ class HomeScreen(MDScreen):
             
             # Apply clip_children manually if needed for container
             self.ids.carousel_container.clip_children = True
+        
+        # Start Auto Scroll
+        self._start_auto_scroll()
+
+    def on_leave(self):
+        self._stop_auto_scroll()
+
+    def _start_auto_scroll(self):
+        self._stop_auto_scroll() # Ensure no duplicate
+        # Scroll every 3 seconds
+        self._carousel_event = Clock.schedule_interval(self._scroll_carousel, 3)
+
+    def _stop_auto_scroll(self):
+        if self._carousel_event:
+            self._carousel_event.cancel()
+            self._carousel_event = None
+
+    def _scroll_carousel(self, dt):
+        carousel = self.ids.hero_carousel
+        carousel.load_next(mode='next')
 
     def setup_carousel(self):
         # We need to add slides dynamically or definition in KV? 
@@ -346,8 +370,8 @@ class HomeScreen(MDScreen):
         carousel = self.ids.hero_carousel
         
         slide1 = HeroSlide(
-            title="Promo Spesial", 
-            subtitle="Diskon hingga 20% untuk Laptop Gaming!",
+            title="Kepercayaan Pelanggan", 
+            subtitle="Kami selalu berkomitmen untuk memberikan pelayanan terbaik.",
             bg_color=get_color_from_hex("#3F51B5")
         )
         slide2 = HeroSlide(
@@ -418,4 +442,5 @@ class HomeScreen(MDScreen):
             self.manager.transition.direction = "left"
 
     def do_logout(self):
+        self._stop_auto_scroll()
         MDApp.get_running_app().stop()

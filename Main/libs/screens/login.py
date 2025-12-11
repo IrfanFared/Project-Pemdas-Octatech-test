@@ -49,7 +49,7 @@ class LoginScreen(MDScreen):
         )
         
         # Background Image with Overlay
-        bg_path = os.path.join(IMG_DIR, "hero3.png")
+        bg_path = os.path.join(IMG_DIR, "bg1.jpg")
         if os.path.exists(bg_path):
             bg_image = FitImage(source=bg_path)
             left_layout.add_widget(bg_image)
@@ -82,18 +82,19 @@ class LoginScreen(MDScreen):
             role="medium",
             bold=True,
             theme_text_color="Custom",
-            text_color=(1, 1, 1, 1),
+            text_color=(0.1, 0.17, 0.35, 1),
             adaptive_height=True
         )
         branding_box.add_widget(tagline)
         
         sub_tagline = MDLabel(
             text="Temukan laptop impianmu dengan mudah dan cepat bersama Octa Tech.",
+            font_name="Montserrat",
             halign="center",
             font_style="Body",
             role="medium",
             theme_text_color="Custom",
-            text_color=(0.9, 0.9, 0.9, 1),
+            text_color=(0.1, 0.17, 0.35, 1),
             adaptive_height=True
         )
         branding_box.add_widget(sub_tagline)
@@ -120,7 +121,8 @@ class LoginScreen(MDScreen):
         # 1. Header Text
         header_box = MDBoxLayout(orientation='vertical', adaptive_height=True, spacing="8dp")
         welcome_label = MDLabel(
-            text="Welcome Back! 👋",
+            text="Welcome Back!",
+            font_name="Poppins-Bold",
             font_style="Display",
             role="small",
             bold=True,
@@ -130,6 +132,7 @@ class LoginScreen(MDScreen):
         )
         subtitle_label = MDLabel(
             text="Masukkan detail akun kamu untuk login.",
+            font_name="Poppins",
             font_style="Body",
             role="large",
             theme_text_color="Secondary",

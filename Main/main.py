@@ -28,6 +28,13 @@ from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.lang import Builder
+from kivy.core.text import LabelBase
+
+# Register Fonts
+LabelBase.register(name="Montserrat", fn_regular="Main/assets/fonts/Montserrat-Bold.ttf")
+LabelBase.register(name="Poppins", fn_regular="Main/assets/fonts/Poppins-Medium.ttf")
+LabelBase.register(name="Poppins-Bold", fn_regular="Main/assets/fonts/Poppins-Bold.ttf")
+LabelBase.register(name="LeagueSpartan", fn_regular="Main/assets/fonts/LeagueSpartan-Bold.ttf")
 
 DB_NAME = "users.db"
 Window.size = (1920, 1080   ) # Ukuran disesuaikan tampilan HP agar pas dengan desain
