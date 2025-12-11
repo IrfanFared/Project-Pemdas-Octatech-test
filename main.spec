@@ -1,8 +1,13 @@
 from kivy_deps import sdl2, glew
 from kivymd import hooks_path as kivymd_hooks_path
+from PyInstaller.utils.hooks import collect_all
 import os
 
 # -*- mode: python ; coding: utf-8 -*-
+
+# --- COLLECT KIVYMD DATA ---
+# This ensures all KivyMD assets, modules, and dependencies are included
+kivymd_datas, kivymd_binaries, kivymd_hiddenimports = collect_all('kivymd')
 
 # --- DEFINE ASSETS ---
 # Include all KV files and asset folders
@@ -13,27 +18,19 @@ added_files = [
     ('user_data.db', '.'),
 ]
 
+# Merge our assets with KivyMD's
+all_datas = added_files + kivymd_datas
+all_hiddenimports = [
+    'sqlite3',
+    'kivymd.icon_definitions', 
+] + kivymd_hiddenimports
+
 a = Analysis(
     ['main.py'],
     pathex=[os.getcwd()],
-    binaries=[],
-    datas=added_files,
-    hiddenimports=[
-        'kivymd.icon_definitions',
-        'kivymd.app',
-        'kivymd.uix.button',
-        'kivymd.uix.card',
-        'kivymd.uix.label',
-        'kivymd.uix.screen',
-        'kivymd.uix.boxlayout',
-        'kivymd.uix.floatlayout',
-        'kivymd.uix.fitimage',
-        'kivymd.uix.textfield',
-        'kivymd.uix.widget',
-        'kivymd.uix.snackbar',
-        'kivymd.uix.dialog',
-        'sqlite3',
-    ],
+    binaries=kivymd_binaries,
+    datas=all_datas,
+    hiddenimports=all_hiddenimports,
     hookspath=[kivymd_hooks_path],
     hooksconfig={},
     runtime_hooks=[],
