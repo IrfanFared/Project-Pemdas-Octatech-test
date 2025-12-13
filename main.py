@@ -37,7 +37,7 @@ LabelBase.register(name="Poppins", fn_regular=os.path.join(script_dir, "Main/ass
 LabelBase.register(name="Poppins-Bold", fn_regular=os.path.join(script_dir, "Main/assets/fonts/Poppins-Bold.ttf"))
 LabelBase.register(name="LeagueSpartan", fn_regular=os.path.join(script_dir, "Main/assets/fonts/LeagueSpartan-Bold.ttf"))
 
-DB_NAME = "users.db"
+DB_NAME = "users.db"#
 Window.size = (1920, 1080   ) # Ukuran disesuaikan tampilan HP agar pas dengan desain
 
 # =========================================
